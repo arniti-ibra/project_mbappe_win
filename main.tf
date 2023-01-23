@@ -109,6 +109,8 @@ resource "azurerm_windows_virtual_machine" "az_win_vm" {
     storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
   }
 
+  custom_data = base64encode(data.template_file.add_anisble_user_script.rendered)
+
   tags = {
     os = "windows"
   }
@@ -127,4 +129,13 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {
     enabled = false
 
   }
+}
+
+data "template_file" "add_anisble_user_script" {
+  template = templatefile("${path.module}/add_user.tpl", {
+    user     = var.user
+    python   = var.default_python
+    password = var.password
+    }
+  )
 }
