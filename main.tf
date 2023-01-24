@@ -51,6 +51,21 @@ resource "azurerm_network_security_rule" "network_security_rule" {
   resource_group_name         = azurerm_resource_group.vm_rg.name
   network_security_group_name = azurerm_network_security_group.nsg.name
 }
+
+resource "azurerm_network_security_rule" "network_security_rule_2" {
+  name                        = "WINRM-HTTPS"
+  priority                    = 101
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "5985-5986"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = azurerm_resource_group.vm_rg.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
+
 resource "azurerm_network_interface" "main" {
   name                = format("%s-nic", var.purpose) #"tfvm-nic"
   location            = azurerm_resource_group.vm_rg.location
@@ -109,7 +124,11 @@ resource "azurerm_windows_virtual_machine" "az_win_vm" {
     storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
   }
 
-  custom_data = base64encode(data.template_file.add_anisble_user_script.rendered)
+  winrm_listener {
+    protocol = "Http"
+  }
+
+  # custom_data = base64encode(data.template_file.add_anisble_user_script.rendered)
 
   tags = {
     os = "windows"
@@ -131,11 +150,21 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "vm_shutdown_schedule" {
   }
 }
 
-data "template_file" "add_anisble_user_script" {
-  template = templatefile("${path.module}/add_user.tpl", {
-    user     = var.user
-    python   = var.default_python
-    password = var.password
-    }
-  )
-}
+# resource "azurerm_virtual_machine_extension" "software" {
+#   name                 = "install-software"
+#   resource_group_name  = azurerm_resource_group.vm_rg.name
+#   virtual_machine_id   = azurerm_virtual_machine.az_win_vm.id
+#   publisher            = "Microsoft.Compute"
+#   type                 = "CustomScriptExtension"
+#   type_handler_version = "3.0"
+
+#   protected_settings = <<SETTINGS
+#   {
+#     "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${base64encode(data.template_file.tf.rendered)}')) | Out-File -filepath install.ps1\" && powershell -ExecutionPolicy Unrestricted -File install.ps1"
+#   }
+#   SETTINGS
+# }
+
+# data "template_file" "tf" {
+#     template = "${file("${path.module}/pwsh.ps1")}"
+# }
