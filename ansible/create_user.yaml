@@ -1,0 +1,7 @@
+- name: local_user
+  ansible.windows.win_user:
+    name: "arnitibrahimi"
+    password: "Password123!"
+    groups: "Users" 
+    update_password: on_create
+    password_expired: true

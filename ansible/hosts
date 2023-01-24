@@ -1,0 +1,13 @@
+## set up ssh user name and path to python3 ##
+[arnitibrahimi:vars]
+ansible_user='projectmbappe'
+ansible_password='ProjectMbappe1!'
+ansible_connection='winrm'
+ansible_winrm_server_cert_validation='ignore'
+ansible_port='5985'
+ansible_winrm_transport='ntlm'
+
+[arnitibrahimi]
+23.102.30.117
+
+

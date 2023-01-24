@@ -1,0 +1,10 @@
+---
+# Install the Azure CLI
+# Based on <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt?view=azure-cli-latest>
+
+- name: Install Azure CLI
+  win_chocolatey:
+    name: azure-cli
+    state: present
+
+...

@@ -1,0 +1,10 @@
+---
+- hosts: arnitibrahimi
+  become: yes
+  become_method: runas
+  become_user: System
+
+  tasks:
+    - import_tasks: create_user.yaml 
+    - import_tasks: azure-cli.yaml
+    - import_tasks: ce04_install_prereqs.yaml
