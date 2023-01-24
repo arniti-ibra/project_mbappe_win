@@ -53,13 +53,13 @@ resource "azurerm_network_security_rule" "network_security_rule" {
 }
 
 resource "azurerm_network_security_rule" "network_security_rule_2" {
-  name                        = "WINRM-HTTPS"
+  name                        = "WINRM-HTTP"
   priority                    = 101
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "5985-5986"
+  destination_port_range      = "5985"
   source_address_prefix       = "*"
   destination_address_prefix  = "VirtualNetwork"
   resource_group_name         = azurerm_resource_group.vm_rg.name
